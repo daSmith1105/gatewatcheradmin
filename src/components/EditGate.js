@@ -1,42 +1,42 @@
 import React from 'react';
 
-class AddCompany extends React.Component {
+class EditGate extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
+            gateId: '',
             name: '',
-            flagged: 0,
+            dir: '',
+            reportErrors: 1,
             customerId: '',
             submitted: false,
             waiting: false,
             success: false,
             fail: false,
         }
-
-        this.handleAddCompany = this.handleAddCompany.bind(this);
+        this.handleEditGate = this.handleEditGate.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleClear = this.handleClear.bind(this);
-        this.refreshCompanyList = this.refreshCompanyList.bind(this);
-        this.toggleFlagged = this.toggleFlagged.bind(this);
+        this.refreshGateList = this.refreshGateList.bind(this);
     }
 
     componentDidMount() {
-        if(this.props.isAdmin) {
-            this.setState({ customerId: this.props.customers.id })
-        } else {
-            this.setState({
-                customerId: this.props.customers[0].id,
+        this.setState({
+            gateId: this.props.rowData.id,
+            name: this.props.rowData.sName,
+            dir: this.props.rowData.sDir,
+            reportErrors: this.props.rowData.fReportErrors,
+            customerId: this.props.rowData.GateCustomer.id,
         })
-        }
     }
 
     componentWillUnmount() {
         if(this.props.isMaster) {
-            this.props.getAllCompanies();
+            this.props.getAllGates()
         }
         if(this.props.isAdmin) {
-            this.props.getAllCompaniesByCustomer();
+            this.props.getAllGatesByCustomer();
         }
     }
 
@@ -48,8 +48,10 @@ class AddCompany extends React.Component {
 
     handleClear() {
         this.setState({
+            gateId: '',
             name: '',
-            flagged: '',
+            dir: '',
+            reportErrors: 1,
             customerId: '',
             submitted: false,
             waiting: false,
@@ -58,17 +60,18 @@ class AddCompany extends React.Component {
         })
     }
 
-  handleAddCompany(e) {
+  handleEditGate(e) {
         e.preventDefault();
-
-        fetch('/api/gatecompany/' + this.state.customerId, {
+        fetch('/api/gateupdate/' + this.state.gateId, {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 sName: this.state.name.trim(),
-                fFlagged: this.state.flagged,
+                sDir: this.state.dir.trim(),
+                fReportErrors: this.state.reportErrors,
+                bCustomerId: this.state.customerId
             })
         })
         .then(res => res.json())
@@ -80,25 +83,15 @@ class AddCompany extends React.Component {
             console.error('Error:', error)
             this.setState({ fail: true })
         });
-        
+ 
     }
 
-    refreshCompanyList() {
-        this.props.closeAddCompany()
+    refreshGateList() {
+        this.props.closeEditGate()
         this.setState({ 
             success: false,
             fail: false
         })
-    }
-
-    toggleFlagged() {
-        let flaggedState = this.state.flagged;
-        if (flaggedState === 0) {
-            this.setState({ flagged: 1}, () => console.log(this.state.flagged) )
-        } else {
-            this.setState({ flagged: 0}, () => console.log(this.state.flagged) )
-        }
-
     }
 
     render() {
@@ -107,8 +100,8 @@ class AddCompany extends React.Component {
                 { this.state.success ? 
                     <div className="postNotification">
                         <div className="postNotificationContainer">
-                            <p>Company Add Successful!</p>
-                            <button onClick={ () => this.refreshCompanyList() }>OK</button>
+                            <p>Gate Edit Successful!</p>
+                            <button onClick={ () => this.refreshGateList() }>OK</button>
                         </div>
                     </div> :
                     null
@@ -116,56 +109,67 @@ class AddCompany extends React.Component {
 
                 { this.state.fail ? 
                     <div className="postNotification">
-                        <p>Company Add Failed!</p>
+                        <p>Gate Edit Failed!</p>
                         <p>If the problem continues please contact your installer.</p>
-                        <button onClick={ () => this.refreshCompanyList() }>OK</button>
+                        <button onClick={ () => this.refreshGateList() }>OK</button>
                     </div> :
                     null
                 }
 
                 { !this.state.success || !this.state.fail ?
                     <div>
-                        <h1>Add Company:</h1>
-                        <form onSubmit={ this.handleAddCompany }>
-                        
+                        <h1>Edit Gate:</h1>
+                        <form onSubmit={ this.handleEditGate }>
+
                         <label>Customer:</label>
                         { this.props.isMaster ? 
                         <select value={this.state.customerId} onChange={(e) => this.setState({ customerId: e.target.value})}>
                             {this.props.customers.map( customer => 
                                 <option key={ customer.id } value={ customer.id }>{ customer.sName }</option>)
-                            } 
+                            }  
                         </select> : <span>{ this.props.customerName }</span> }
                         <br/>
 
-                        <label>Company Name:</label>
+                        <label>Gate Name:</label>
                         <input
                             type="text"
-                            placeholder="enter name"
+                            placeholder="enter gate name"
                             name="name"
                             value={ this.state.name }
-                            onChange={ this.handleChange } />
+                            onChange={ this.handleChange }
+                            required />
                         <br/>
 
-                        <label>Flagged:</label>
+                        <label>Gate Directory: </label>
+                        <span> base/ </span>
+                        <input
+                            type="text"
+                            placeholder="enter gate directory"
+                            name="dir"
+                            value={ this.state.dir }
+                            onChange={ this.handleChange }
+                            required />
+                            <span> /</span>
+                        <br/>
+
+                        <label>Report Errors:</label>
                         <input
                             type="checkbox"
-                            name="flagged"
-                            value={ this.state.flagged }
-                            checked={ this.state.flagged }
-                            onChange={ this.toggleFlagged } />
+                            name="reportErrors"
+                            checked={this.state.reportErrors}
+                            onChange={ () => this.setState({ reportErrors: !this.state.reportErrors}) } />
                         <br/>
-
                         <div className="addModalButtonContainer">
-                            <button onClick={ () => this.props.closeAddCompany() }>Cancel</button>
-                            <input type="submit" value="Add Company" />
+                            <button onClick={ () => this.props.closeEditGate() }>Cancel</button>
+                            <input type="submit" value="Save Gate" />
                         </div>
                         </form>
                     </div> :
-                    null 
+                    null
                 }
-                </div>
-            )
+            </div>
+        )
     }
 }
 
-export default AddCompany;
+export default EditGate;

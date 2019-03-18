@@ -1,6 +1,6 @@
 import React from 'react';
 
-class AddUser extends React.Component {
+class EditUser extends React.Component {
     constructor(props) {
         super(props);
 
@@ -15,22 +15,23 @@ class AddUser extends React.Component {
             waiting: false,
             success: false,
             fail: false,
-            showAddUser: false,
+            showEditUser: false,
         }
-        this.handleAddUser = this.handleAddUser.bind(this);
+        this.handleEditUser = this.handleEditUser.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleClear = this.handleClear.bind(this);
         this.refreshUserList = this.refreshUserList.bind(this);
     }
-
     componentDidMount() {
-        if(this.props.isAdmin){
-            this.setState({ customerId: this.props.customers.id })
-        } else {
-            this.setState({
-                customerId: this.props.customers[0].id,
+        this.setState({
+            userId: this.props.rowData.id,
+            firstName: this.props.rowData.sFirstName,
+            lastName: this.props.rowData.sLastName,
+            username: this.props.rowData.sUsername,
+            password: this.props.rowData.sPassword,
+            customerId: this.props.rowData.GateCustomer.id,
+            typeId: this.props.rowData.GateAcl.id,
         })
-        }
     }
 
     componentWillUnmount() {
@@ -55,17 +56,18 @@ class AddUser extends React.Component {
             username: '',
             password: '',
             customerId: '',
+            typeId: '',
             submitted: false,
             waiting: false,
             success: false,
             fail: false,
+            showEditUser: false,
         })
     }
 
-  handleAddUser(e) {
+  handleEditUser(e) {
         e.preventDefault();
-        console.log(this.state.customerId)
-        fetch('/api/gateuser/' + this.state.customerId, {
+        fetch('/api/gateuserupdate/' + this.state.userId, {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json'
@@ -75,7 +77,8 @@ class AddUser extends React.Component {
                 sLastName: this.state.lastName.trim(),
                 sUsername: this.state.username.trim(),
                 sPassword: this.state.password.trim(),
-                bAuthID: this.state.typeId
+                bAuthID: this.state.typeId,
+                bCustomerID: this.state.customerId
             })
         })
         .then(res => res.json())
@@ -90,7 +93,7 @@ class AddUser extends React.Component {
     }
 
     refreshUserList() {
-        this.props.closeAddUser()
+        this.props.closeEditUser()
         this.setState({ 
             success: false,
             fail: false
@@ -98,13 +101,12 @@ class AddUser extends React.Component {
     }
 
     render() {
-console.log( this.props)
         return(
             <div className="addModal">
                  { this.state.success ? 
                     <div className="postNotification">
                         <div className="postNotificationContainer">
-                            <p>User Add Successful!</p>
+                            <p>User Edit Successful!</p>
                             <button onClick={ () => this.refreshUserList() }>OK</button>
                         </div>
                     </div> :
@@ -113,7 +115,7 @@ console.log( this.props)
 
                 { this.state.fail ? 
                     <div className="postNotification">
-                        <p>User Add Failed!</p>
+                        <p>User Edit Failed!</p>
                         <p>If the problem continues please contact your installer.</p>
                         <button onClick={ () => this.refreshUserList() }>OK</button>
                     </div> :
@@ -122,15 +124,16 @@ console.log( this.props)
 
                 { !this.state.success || !this.state.fail ?
                 <div>
-                    <h1>Add User</h1>
-                    <form onSubmit={ this.handleAddUser }>
-               
+                    <h1>Edit User</h1>
+                    <form onSubmit={ this.handleEditUser }>
+
+              
                     <label>Customer:</label>
                     { this.props.isMaster ?
-                    <select value={this.state.customerId} onChange={(e) => this.setState({ customerId: e.target.value})}>
-                        {this.props.customers.map( customer => 
-                            <option key={ customer.id } value={ customer.id }>{ customer.sName }</option>)
-                        }  
+                        <select value={this.state.customerId} onChange={(e) => this.setState({ customerId: e.target.value})}>
+                            {this.props.customers.map( customer => 
+                                <option key={ customer.id } value={ customer.id }>{ customer.sName }</option>)
+                            }  
                     </select> : <span>{ this.props.customerName }</span> }
                     <br/>
 
@@ -140,8 +143,7 @@ console.log( this.props)
                         placeholder="enter first name"
                         name="firstName"
                         value={ this.state.firstName }
-                        onChange={ this.handleChange }
-                        required />
+                        onChange={ this.handleChange } />
                     <br/>
 
                     <label>Last Name:</label>
@@ -150,8 +152,7 @@ console.log( this.props)
                         placeholder="enter last name"
                         name="lastName"
                         value={ this.state.lastName }
-                        onChange={ this.handleChange }
-                        required />
+                        onChange={ this.handleChange } />
                     <br/>
 
                     <label>Username:</label>
@@ -160,8 +161,7 @@ console.log( this.props)
                         placeholder="enter username"
                         name="username"
                         value={ this.state.username }
-                        onChange={ this.handleChange }
-                        required />
+                        onChange={ this.handleChange } />
                     <br/>
 
                     <label>Password:</label>
@@ -170,21 +170,20 @@ console.log( this.props)
                         placeholder="enter password"
                         name="password"
                         value={ this.state.password }
-                        onChange={ this.handleChange }
-                        required />
+                        onChange={ this.handleChange } />
                     <br/>
 
                     <label>Access Group:</label>
-                    <select value={this.state.typeId} onChange={(e) => this.setState({ typeId: e.target.value })}>
-                        {this.props.authTypes.map( type => 
-                            <option key={ type.id } value={ type.id }>{ type.sName }</option>)
-                        }  
-                    </select>
+                        <select value={this.state.typeId} onChange={(e) => this.setState({ typeId: e.target.value })}>
+                            {this.props.authTypes.map( type => 
+                                <option key={ type.id } value={ type.id }>{ type.sName }</option>)
+                            }  
+                        </select>
                     <br/>
-                        <div className="addModalButtonContainer">
-                            <button onClick={ () => this.props.closeAddUser() }>Cancel</button>
-                            <input type="submit" value="Add User" />
-                        </div>
+                    <div className="addModalButtonContainer">
+                        <button onClick={ () => this.props.closeEditUser() }>Cancel</button>
+                        <input type="submit" value="Save User" />
+                    </div>
                     </form>
                     </div> :
                     null
@@ -194,4 +193,4 @@ console.log( this.props)
     }
 }
 
-export default AddUser;
+export default EditUser;

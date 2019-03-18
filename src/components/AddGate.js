@@ -1,24 +1,23 @@
 import React from 'react';
 
-class AddLPN extends React.Component {
+class AddGate extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            lpn: '',
+            name: '',
+            dir: '',
+            reportErrors: true,
             customerId: '',
-            companyId: '',
-            flagged: 0,
             submitted: false,
             waiting: false,
             success: false,
             fail: false,
         }
-        this.handleAddLPN = this.handleAddLPN.bind(this);
+        this.handleAddGate = this.handleAddGate.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleClear = this.handleClear.bind(this);
-        this.refreshLpnList = this.refreshLpnList.bind(this);
-        this.toggleFlagged = this.toggleFlagged.bind(this);
+        this.refreshGateList = this.refreshGateList.bind(this);
     }
 
     componentDidMount() {
@@ -28,20 +27,15 @@ class AddLPN extends React.Component {
             this.setState({
                 customerId: this.props.customers[0].id,
         })
-        this.setState({
-            personId: this.props.people[0].id,
-            companyId: this.props.companies[0].id,
-            flagged: 0,
-        })
         }
     }
 
     componentWillUnmount() {
         if(this.props.isMaster) {
-            this.props.getAllLpns();
+            this.props.getAllGates();
         }
         if(this.props.isAdmin) {
-            this.props.getAllLpnsByCustomer();
+            this.props.getAllGatesByCustomer();
         }
     }
 
@@ -53,7 +47,10 @@ class AddLPN extends React.Component {
 
     handleClear() {
         this.setState({
-            lpn: '',
+            name: '',
+            dir: '',
+            reportErrors: false,
+            customerId: '',
             submitted: false,
             waiting: false,
             success: false,
@@ -61,18 +58,18 @@ class AddLPN extends React.Component {
         })
     }
 
-  handleAddLPN(e) {
+  handleAddGate(e) {
         e.preventDefault();
 
-        fetch('/api/gatelpn/' + this.state.customerId, {
+        fetch('/api/gate/' + this.state.customerId, {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                sLPN: this.state.lpn.trim(),
-                bCompanyID: this.state.companyId,
-                fFlagged: this.state.flagged
+                sName: this.state.name.trim(),
+                sDir: this.state.dir.trim(),
+                fReportErrors: this.state.reportErrors
             })
         })
         .then(res => res.json())
@@ -84,24 +81,15 @@ class AddLPN extends React.Component {
             console.error('Error:', error)
             this.setState({ fail: true })
         });
+ 
     }
 
-    refreshLpnList() {
-        this.props.closeAddLpn()
+    refreshGateList() {
+        this.props.closeAddGate()
         this.setState({ 
             success: false,
             fail: false
         })
-    }
-
-    toggleFlagged() {
-        let flaggedState = this.state.flagged;
-        if (flaggedState === 0) {
-            this.setState({ flagged: 1})
-        } else {
-            this.setState({ flagged: 0})
-        }
-
     }
 
     render() {
@@ -110,8 +98,8 @@ class AddLPN extends React.Component {
                 { this.state.success ? 
                     <div className="postNotification">
                         <div className="postNotificationContainer">
-                            <p>LPN Add Successful!</p>
-                            <button onClick={ () => this.refreshLpnList() }>OK</button>
+                            <p>Gate Add Successful!</p>
+                            <button onClick={ () => this.refreshGateList() }>OK</button>
                         </div>
                     </div> :
                     null
@@ -119,65 +107,68 @@ class AddLPN extends React.Component {
 
                 { this.state.fail ? 
                     <div className="postNotification">
-                        <p>LPN Add Failed!</p>
+                        <p>Gate Add Failed!</p>
                         <p>If the problem continues please contact your installer.</p>
-                        <button onClick={ () => this.refreshLpnList() }>OK</button>
+                        <button onClick={ () => this.refreshGateList() }>OK</button>
                     </div> :
                     null
                 }
 
                 { !this.state.success || !this.state.fail ?
                     <div>
-                        <h1>Add LPN</h1>
-                        <form onSubmit={ this.handleAddLPN }>
+                        <h1>Add Gate:</h1>
+                        <form onSubmit={ this.handleAddGate }>
 
                         <label>Customer:</label>
                         { this.props.isMaster ? 
-                            <select value={this.state.customerId} onChange={(e) => this.setState({ customerId: e.target.value})}>
-                                {this.props.customers.map( customer => 
-                                    <option key={ customer.id } value={ customer.id }>{ customer.sName }</option>)
-                                }  
-                            </select> : <span>{ this.props.customerName }</span> }
-                        <br/>
-
-                        <label>Company</label>
-                        <select value={this.state.companyId} onChange={(e) => this.setState({ companyId: e.target.value})}>
-                            {this.props.companies.map( company => 
-                                <option key={ company.id } value={ company.id }>{ company.sName }</option>)
+                        <select value={this.state.customerId} onChange={(e) => this.setState({ customerId: e.target.value})}>
+                            {this.props.customers.map( customer => 
+                                <option key={ customer.id } value={ customer.id }>{ customer.sName }</option>)
                             }  
-                        </select>
+                        </select> : <span>{ this.props.customerName }</span> }
                         <br/>
 
-                        <label>License Plate Number:</label>
+                        <label>Gate Name:</label>
                         <input
                             type="text"
-                            placeholder="enter lpn"
-                            name="lpn"
-                            value={ this.state.lpn }
+                            placeholder="enter gate name"
+                            name="name"
+                            value={ this.state.name}
                             onChange={ this.handleChange }
                             required />
                         <br/>
 
-                        <label>Flagged:</label>
+                        <label>Gate Directory: </label>
+                        <span> base/ </span>
+                        <input
+                            type="text"
+                            placeholder="enter gate directory"
+                            name="dir"
+                            value={ this.state.dir }
+                            onChange={ this.handleChange }
+                            required />
+                            <span> /</span>
+                        <br/>
+
+                        <label>Report Errors:</label>
                         <input
                             type="checkbox"
-                            name="flagged"
-                            value={ this.state.flagged }
-                            checked={ this.state.flagged }
-                            onChange={ this.toggleFlagged } />
+                            name="reportErrors"
+                            checked={this.state.reportErrors}
+                            onChange={ () => this.setState({ reportErrors: !this.state.reportErrors}) } />
                         <br/>
                         <div className="addModalButtonContainer">
-                            <button onClick={ () => this.props.closeAddLpn() }>Cancel</button>
-                            <input type="submit" value="Add License Plate Number" />
+                            <button onClick={ () => this.props.closeAddGate() }>Cancel</button>
+                            <input type="submit" value="Add Gate" />
                         </div>
                         </form>
                         
                     </div> :
-                    null 
+                    null
                 }
             </div>
         )
     }
 }
 
-export default AddLPN;
+export default AddGate;

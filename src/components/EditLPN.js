@@ -1,6 +1,6 @@
 import React from 'react';
 
-class AddLPN extends React.Component {
+class EditLPN extends React.Component {
     constructor(props) {
         super(props);
 
@@ -8,32 +8,28 @@ class AddLPN extends React.Component {
             lpn: '',
             customerId: '',
             companyId: '',
+            lpnId: '',
             flagged: 0,
             submitted: false,
             waiting: false,
             success: false,
             fail: false,
         }
-        this.handleAddLPN = this.handleAddLPN.bind(this);
+        this.handleEditLPN = this.handleEditLPN.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleClear = this.handleClear.bind(this);
         this.refreshLpnList = this.refreshLpnList.bind(this);
         this.toggleFlagged = this.toggleFlagged.bind(this);
     }
-
+    
     componentDidMount() {
-        if(this.props.isAdmin){
-            this.setState({ customerId: this.props.customers.id })
-        } else {
-            this.setState({
-                customerId: this.props.customers[0].id,
-        })
         this.setState({
-            personId: this.props.people[0].id,
-            companyId: this.props.companies[0].id,
-            flagged: 0,
+            lpn: this.props.rowData.sLPN,
+            customerId: this.props.rowData.GateCustomer.id,
+            companyId: this.props.rowData.GateCompany.id,
+            lpnId: this.props.rowData.id,
+            flagged: this.props.rowData.fFlagged,
         })
-        }
     }
 
     componentWillUnmount() {
@@ -54,6 +50,10 @@ class AddLPN extends React.Component {
     handleClear() {
         this.setState({
             lpn: '',
+            customerId: '',
+            companyId: '',
+            lpnId: '',
+            flagged: 0,
             submitted: false,
             waiting: false,
             success: false,
@@ -61,10 +61,10 @@ class AddLPN extends React.Component {
         })
     }
 
-  handleAddLPN(e) {
+  handleEditLPN(e) {
         e.preventDefault();
 
-        fetch('/api/gatelpn/' + this.state.customerId, {
+        fetch('/api/gatelpnupdate/' + this.state.lpnId, {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json'
@@ -72,6 +72,7 @@ class AddLPN extends React.Component {
             body: JSON.stringify({
                 sLPN: this.state.lpn.trim(),
                 bCompanyID: this.state.companyId,
+                bCustomerId: this.state.customerId,
                 fFlagged: this.state.flagged
             })
         })
@@ -87,7 +88,7 @@ class AddLPN extends React.Component {
     }
 
     refreshLpnList() {
-        this.props.closeAddLpn()
+        this.props.closeEditLpn()
         this.setState({ 
             success: false,
             fail: false
@@ -110,7 +111,7 @@ class AddLPN extends React.Component {
                 { this.state.success ? 
                     <div className="postNotification">
                         <div className="postNotificationContainer">
-                            <p>LPN Add Successful!</p>
+                            <p>LPN Edit Successful!</p>
                             <button onClick={ () => this.refreshLpnList() }>OK</button>
                         </div>
                     </div> :
@@ -119,7 +120,7 @@ class AddLPN extends React.Component {
 
                 { this.state.fail ? 
                     <div className="postNotification">
-                        <p>LPN Add Failed!</p>
+                        <p>LPN Edit Failed!</p>
                         <p>If the problem continues please contact your installer.</p>
                         <button onClick={ () => this.refreshLpnList() }>OK</button>
                     </div> :
@@ -128,16 +129,16 @@ class AddLPN extends React.Component {
 
                 { !this.state.success || !this.state.fail ?
                     <div>
-                        <h1>Add LPN</h1>
-                        <form onSubmit={ this.handleAddLPN }>
+                        <h1>Edit LPN</h1>
+                        <form onSubmit={ this.handleEditLPN }>
 
                         <label>Customer:</label>
                         { this.props.isMaster ? 
-                            <select value={this.state.customerId} onChange={(e) => this.setState({ customerId: e.target.value})}>
-                                {this.props.customers.map( customer => 
-                                    <option key={ customer.id } value={ customer.id }>{ customer.sName }</option>)
-                                }  
-                            </select> : <span>{ this.props.customerName }</span> }
+                        <select value={this.state.customerId} onChange={(e) => this.setState({ customerId: e.target.value})}>
+                            {this.props.customers.map( customer => 
+                                <option key={ customer.id } value={ customer.id }>{ customer.sName }</option>)
+                            }  
+                        </select> : <span>{ this.props.customerName }</span> }
                         <br/>
 
                         <label>Company</label>
@@ -167,11 +168,10 @@ class AddLPN extends React.Component {
                             onChange={ this.toggleFlagged } />
                         <br/>
                         <div className="addModalButtonContainer">
-                            <button onClick={ () => this.props.closeAddLpn() }>Cancel</button>
-                            <input type="submit" value="Add License Plate Number" />
+                            <button onClick={ () => this.props.closeEditLpn() }>Cancel</button>
+                            <input type="submit" value="Save License Plate Number" />
                         </div>
                         </form>
-                        
                     </div> :
                     null 
                 }
@@ -180,4 +180,4 @@ class AddLPN extends React.Component {
     }
 }
 
-export default AddLPN;
+export default EditLPN;

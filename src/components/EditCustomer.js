@@ -5,6 +5,7 @@ class EditCustomer extends React.Component {
         super(props);
 
         this.state = {
+            customerId: '',
             name: '',
             dir: '',
             domain: '',
@@ -13,10 +14,19 @@ class EditCustomer extends React.Component {
             success: false,
             fail: false,
         }
-        this.handleAddCustomer = this.handleAddCustomer.bind(this);
+        this.handleEditCustomer = this.handleEditCustomer.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleClear = this.handleClear.bind(this);
         this.refreshCustomerList = this.refreshCustomerList.bind(this);
+    }
+
+    componentDidMount() {
+        this.setState({
+            customerId: this.props.rowData.id,
+            name: this.props.rowData.sName,
+            dir: this.props.rowData.sDir,
+            domain: this.props.rowData.sDomain
+        })
     }
 
     componentWillUnmount() {
@@ -43,10 +53,10 @@ class EditCustomer extends React.Component {
         })
     }
 
-  handleAddCustomer(e) {
+  handleEditCustomer(e) {
         e.preventDefault();
 
-        fetch('/api/gatecustomer', {
+        fetch('/api/gatecustomerupdate/' + this.state.customerId, {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json'
@@ -59,6 +69,7 @@ class EditCustomer extends React.Component {
         })
         .then(res => res.json())
         .then(res => {
+            this.props.refreshTable();
             console.log('Success:', JSON.stringify(res))
             this.setState({
                 success: true
@@ -73,7 +84,7 @@ class EditCustomer extends React.Component {
     }
 
     refreshCustomerList() {
-        this.props.closeAddCustomer()
+        this.props.closeEditCustomer()
         this.setState({ 
             success: false,
             fail: false
@@ -86,7 +97,7 @@ class EditCustomer extends React.Component {
                 { this.state.success ? 
                     <div className="postNotification">
                         <div className="postNotificationContainer">
-                            <p>Customer Add Successful!</p>
+                            <p>Customer Edit Successful!</p>
                             <button onClick={ () => this.refreshCustomerList() }>OK</button>
                         </div>
                     </div> :
@@ -95,7 +106,7 @@ class EditCustomer extends React.Component {
 
                 { this.state.fail ? 
                     <div className="postNotification">
-                        <p>Customer Add Failed!</p>
+                        <p>Customer Edit Failed!</p>
                         <p>If the problem continues please contact your installer.</p>
                         <button onClick={ () => this.refreshCustomerList() }>OK</button>
                     </div> :
@@ -104,8 +115,8 @@ class EditCustomer extends React.Component {
 
                 { !this.state.success || !this.state.fail ?
                     <div>
-                        <h1>Add Customer</h1>
-                        <form onSubmit={ this.handleAddCustomer }>
+                        <h1>Edit Customer</h1>
+                        <form onSubmit={ this.handleEditCustomer }>
 
                         <label>Customer Name:</label>
                         <input
@@ -113,8 +124,7 @@ class EditCustomer extends React.Component {
                             placeholder="enter name"
                             name="name"
                             value={ this.state.name }
-                            onChange={ this.handleChange }
-                            required />
+                            onChange={ this.handleChange } />
                         <br/>
 
                         <label>Customer Directory:</label>
@@ -124,8 +134,7 @@ class EditCustomer extends React.Component {
                             placeholder="enter directory"
                             name="dir"
                             value={ this.state.dir }
-                            onChange={ this.handleChange } 
-                            required />
+                            onChange={ this.handleChange } />
                         <span> /</span>
                         <br/>
 
@@ -135,16 +144,15 @@ class EditCustomer extends React.Component {
                             placeholder="enter domain"
                             name="domain"
                             value={ this.state.domain }
-                            onChange={ this.handleChange }
-                            required />
+                            onChange={ this.handleChange }/>
                             <span> .dividia.net</span>
                         <br/>
                         <div className="addModalButtonContainer">
-                            <button onClick={ () => this.props.closeAddCustomer() }>Cancel</button>
-                            <input type="submit" value="Add Customer" />
+                            <button onClick={ () => this.props.closeEditCustomer() }>Cancel</button>
+                            <input type="submit" value="Save Customer" />
                         </div>
+                
                         </form>
-                        
                     </div> :
                         null 
                     }

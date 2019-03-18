@@ -1,4 +1,5 @@
 import React from 'react';
+import '../App.css';
 
 export default class LoginScreen extends React.Component {
     constructor(props) {
@@ -7,7 +8,9 @@ export default class LoginScreen extends React.Component {
         this.state = {
             username: '',
             password: '',
-            submittedData: ''
+            userData: '',
+            error: false,
+            success: false,
         }
 
         this.handleChange = this.handleChange.bind(this);
@@ -17,44 +20,66 @@ export default class LoginScreen extends React.Component {
     handleChange(e) {
         this.setState({ [e.target.name]: e.target.value })
     }
+
     handleSubmit(e) {
         e.preventDefault();
-        this.setState({ 
-            submittedData: `Submitted > username: ${ this.state.username } > password: ${ this.state.password }`
+        const username = this.state.username.trim();
+        const password = this.state.password.trim();
+        fetch('/api/finduser/' + username + '/' + password )
+        .then(function(response) {
+            if (!response.ok) {
+                throw Error(response.statusText);
+            }
+            return response;
         })
-        setTimeout(function() {
-            this.setState({ 
-                submittedData: '',
-                username: '',
-                password: ''
+        .then(response => response.json())
+        .then( data => {
+                this.setState({ 
+                    userData: data,
+                    success: true
+                },
+                () => this.props.getUserData( this.state.userData ))
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            this.setState({ error: true })
             })
-        }.bind(this), 5000)
-    }
+        }
+    
         render() {
             return (
             <div>
                 <h1>Gate Tracker</h1>
-                <p>Desktop Version</p>
-                <form onSubmit={ this.handleSubmit }>
+                { this.state.error ? 
+                <div>
+                    <p className="loginError">Username or Password Incorrect. Please retry.</p>
+                </div> :
+                null }
+
+                <form onSubmit={ this.handleSubmit } autoComplete="on">
                     <label>
                         Username:
                         <input type="text" 
                                name="username" 
+                               placeholder="enter username"
                                value={ this.state.username }
-                               onChange={ this.handleChange }/>
+                               onChange={ this.handleChange }
+                               required />
                     </label>
                     <br />
                     <label>
                         Password:
-                        <input type="text" 
+                        <input type="password" 
                                name="password" 
+                               autoComplete="off"
+                               placeholder="enter password"
                                value={ this.state.password }
-                               onChange={ this.handleChange }/>
+                               onChange={ this.handleChange }
+                               required />
                     </label>
                     <br />
                     <input type="submit" value="Submit" />
                 </form>
-                <p>{ this.state.submittedData } </p>
             </div>
             );
         }

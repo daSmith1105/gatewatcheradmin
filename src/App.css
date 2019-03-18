@@ -1,41 +1,600 @@
 .App {
   text-align: center;
+  max-width: 100vw;
+  min-width: 600px;
+  overflow: hidden;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
+.react-icons {
+  vertical-align: middle;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+/* Login Screen */
+
+.loginError {
+  color: red;
+  font-size: 14;
+}
+
+/* Header */
+.header {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  min-width: 600px;
+  height: 60px;
+  background-color: lightblue;
+  padding: 10px;
+  border-bottom: 2px solid rgba(0,0,0,0.4);
+  box-shadow: 0 2px 2px rgba(0,0,0,0.4);
+  overflow: hidden;
+}
+
+.headerLogoContainer {
+  position: absolute;
+  top: -14px;
+  left: 40px;
+  vertical-align: middle;
+}
+
+.headerLogo {
+  vertical-align: middle;
+  margin-bottom: 10px;
+}
+       
+.headerLogoText {
+  display: inline-block;
+  font-size: 200%;
+  margin-left: 10px;
+}
+
+.headerCustomer {
+  font-size: 120%;
+  position: absolute;
+  bottom: 30px;
+  right: 60px;
+}
+
+.userInfo {
+  position: absolute;
+  bottom: 0;
+  right: 60px;
+  display: inline-block;
+}
+
+.userButton {
+  border-radius: 50%;
+  padding: 2px 3px;
+  margin-right: 5px;
+  transition: .5;
+}
+
+/* .userButton:hover {
+  background-color: goldenrod;
+} */
+
+.headerUser {
+ font-size: 90%;
+ display: inline-block;
+ margin-right: 16px;
+ font-style: italic;
+}
+
+.logoutButton {
+ display: inline-block;
+ font-size: 100%;
+ border-radius: .5em;
+ box-shadow: 2px 1px 2px rgba(0,0,0,0.5);
+ transition: .5s;
+}
+
+.logoutButton:hover {
   color: white;
+  background-color: dodgerblue;
+ }
+
+ /* Admin Bar */
+
+.adminBarOpen{
+  position: relative;
+  width: calc(100vw);
+  min-width: 700px;
+  height: 46px;
+  background-color: rgba(0,0,0,0.4);
+  padding: 2px;
+  overflow: hidden;
+  -webkit-transition:all 1.0s ease-in-out;
+  -moz-transition:all 1.0s ease-in-out;
+  -o-transition:all 1.0s ease-in-out;
+  transition:all 1.0s ease-in-out;
+  vertical-align: middle;
+  border-bottom: 2px solid rgba(0,0,0,0.4);
+  box-shadow: 0 2px 2px rgba(0,0,0,0.4);
+  margin-bottom: 20px;
+ }
+
+.adminBarClosed {
+  position: relative;
+  width: calc(100vw + 10px);
+  min-width: calc(100vw - (100vw + 60px));
+  height: 46px;
+  background-color: grey;
+  padding: 2px;
+  margin-left: calc(100vw - 60px);
+  overflow: hidden;
+  border-bottom-left-radius: .5em;
+  -webkit-transition:all 1.0s ease-in-out;
+  -moz-transition:all 1.0s ease-in-out;
+  -o-transition:all 1.0s ease-in-out;
+  transition:all 1.0s ease-in-out;
+  vertical-align: middle;
+  border-bottom: 2px solid rgba(0,0,0,0.4);
+  box-shadow: 0 2px 2px rgba(0,0,0,0.4);
+ }
+
+ .addEventButtonContainer {
+    position: absolute;
+    top: 84px;
+    right: 0;
+    width: 60px;
+    height: 46px;
+    background-color: grey;
+    padding: 2px;
+    border-bottom-left-radius: .5em;
+    -webkit-transition:all 1.0s ease-in-out;
+    -moz-transition:all 1.0s ease-in-out;
+    -o-transition:all 1.0s ease-in-out;
+    transition:all 1.0s ease-in-out;
+    vertical-align: middle;
+    border-bottom: 2px solid rgba(0,0,0,0.4);
+    box-shadow: 0 2px 2px rgba(0,0,0,0.4);
+    transition: .5s;
+    z-index: 5;
+ }
+
+ .addEventButtonContainer:hover {
+  background-color: lightblue;
 }
 
-.App-link {
-  color: #61dafb;
+ .addEventButton {
+   background: transparent;
+   border: none;
+   font-size: 16px;
+   padding-top: 5px;
+ }
+
+ .adminBarSpacer {
+  position: relative;
+  width: calc(100vw);
+  min-width: 700px;
+  height: 46px;
+  padding: 2px;
+ }
+
+ .adminBarToggleButtonOpenContainer {
+   position: absolute;
+   top: 5px;
+   left: 10px;
+   height: 40px;
+   width: 40px;
+   padding: .5em;
+   background-color: transparent;
+   transition: .5s;
+   border: none;
+   border-radius: .5em;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.adminBarToggleButtonCloseContainer {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  height: 40px;
+  width: 40px;
+  background-color: rgba(0,0,0,0);
+  transition: .5s;
+  border: none;
+  border-radius: .5em;
 }
 
+.adminBarToggleButtonOpenContainer:hover, .adminBarToggleButtonCloseContainer:hover {
+  background-color: goldenrod;
+  border: none;
+  height: 40px;
+} 
+
+ .adminButtonContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 400px;
+  margin-right: auto;
+  margin-left: auto;
+  padding-top: 2px;
+ }
+
+ .adminButtonWrapper {
+   margin-right: 10px;
+   margin-left: 10px;
+   margin-top: 2px;
+ }
+
+ .adminButton {
+   height: 40px;
+   width: 70px;
+   position: relative;
+   padding-bottom: 14px;
+   border-radius: .5em;
+   transition: .5s;
+ }
+
+ .adminButton:hover {
+  background-color: lightblue;
+  box-shadow: 2px 2px 2px rgba(255,255,255,0.3);
+ }
+
+ .adminButtonExt {
+  height: 40px;
+  width: 120px;
+  position: relative;
+  padding-bottom: 14px;
+  border-radius: .5em;
+  transition: .5s;
+}
+
+.adminButtonExt:hover {
+ background-color: lightblue;
+ box-shadow: 2px 2px 2px rgba(255,255,255,0.3);
+}
+
+ .adminButtonActive {
+    height: 40px;
+    width: 70px;
+    position: relative;
+    padding-bottom: 14px;
+    border-radius: .5em;
+    transition: .5s;
+    background-color: lightblue;
+    box-shadow: 2px 2px 2px rgba(255,255,255,0.3);
+ }
+
+ .adminButtonExtActive {
+  height: 40px;
+  width: 120px;
+  position: relative;
+  padding-bottom: 14px;
+  border-radius: .5em;
+  transition: .5s;
+  background-color: lightblue;
+  box-shadow: 2px 2px 2px rgba(255,255,255,0.3);
+}
+
+ .adminButtonText {
+   position: absolute;
+   bottom: 5px;
+   left: 0;
+   right: 0;
+   margin: auto;
+   font-weight: 'bold';
+   font-size: 110%;
+ }
+
+ /* Admin screen */
+
+ .adminScreen {
+   position: absolute;
+   top: 134px;
+   left: 0;
+   right: 0;
+   margin: auto;
+   background-color: rgba(0,0,0,0.7);
+   height: 60vh;
+   width: 100%;
+   overflow: hidden;
+   z-index: 5;
+   padding-top: 5%;
+ }
+
+ .adminScreenContainer {
+   position: relative;
+   top: -40px;
+   left: 0;
+   right: 0;
+   margin: auto;
+   height: 90%;
+   width: 90%;
+   max-width: 1200px;
+   background-color: white;
+   border-radius: .5em;
+   margin: auto;
+   padding: 20px;
+ }
+
+ .addButtonContainer {
+   margin-top: -24px;
+ }
 
 /* Customer table */
 .customerTable {
-  width: 100%;
+  width: 90%;
   max-width: 700px;
   margin-right: auto;
   margin-left: auto;
+}
+
+.intakeSelect {
+  width: 260px;
+  display: inline-block;
+  margin: 8px;
+}
+
+.transactionScreen {
+  width: 98%;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: 'center';
+}
+
+.transactionScreenLoading {
+  margin-top: 240px;
+}
+
+.imageModalOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.7);
+  z-index: 1;
+}
+
+.imageModalContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  z-index: 5;
+  width: 50%;
+  height: 0;
+  padding-bottom: 50%;
+  margin-top: 5%;
+  border-radius: 1em;
+  -webkit-box-shadow: 0 0 5px 0 #ccc;  /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+  -moz-box-shadow:    0 0 5px 0 #ccc;  /* Firefox 3.5 - 3.6 */
+  box-shadow:         0 0 5px 0 #ccc;  /* Opera 10.5, IE 9, Firefox 4+, Chrome 6+, iOS 5 */
+}
+
+.previewImage {
+  transform: rotate(90deg);
+  position: relative;
+  margin: auto;
+  z-index: 20;
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%;
+  background-color: rgba(0,0,0,0.8);
+  border-radius: 1em;
+  -webkit-box-shadow: 0 0 20px 0 rgb(126, 119, 119);  /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+  -moz-box-shadow:    0 0 20px 0 rgb(126, 119, 119);  /* Firefox 3.5 - 3.6 */
+  box-shadow:         0 0 20px 0 rgb(126, 119, 119);  /* Opera 10.5, IE 9, Firefox 4+, Chrome 6+, iOS 5 */
+}
+
+.image{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 90%;
+  width: 100%;
+  border-bottom-left-radius: .5em;
+  border-bottom-right-radius: .5em;
+}
+
+.imageEmail {
+  position: absolute;
+  top: 3%;
+  left: 15%;
+  transform: rotate(270deg);
+}
+
+.imageSave {
+  position: absolute;
+  top: 3%;
+  left: 25%;
+  transform: rotate(270deg);
+}
+
+.closeImagePreview {
+  position: absolute;
+  top: 3%;
+  left: 2%;
+  transform: rotate(270deg);
+}
+
+.pdfViewerOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.7);
+  z-index: 1;
+}
+
+.pdfViewerContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  z-index: 5;
+  width: 90vw;
+  height: 90vh;
+  margin-top: 2%;
+  border-radius: 1em;
+  background-color: white;
+}
+
+.pdfEventContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  z-index: 5;
+  width: 80%;
+  height: 80%;
+  margin-top: 5%;
+  border-radius: 1em;
+  background-color: white;
+}
+
+.pdfPhotoLpn {
+  transform: rotate(90deg);
+  border-radius: .5em;
+  margin-bottom: 20px;
+  position: absolute;
+  top: 20%;
+  right: 45%;
+}
+
+.pdfPhotoLoad {
+  transform: rotate(90deg);
+  border-radius: .5em;
+  margin-bottom: 20px;
+  position: absolute;
+  top: 20%;
+  right: 5%;
+}
+
+.pdfViewerEmail {
+  position: absolute;
+  top: 15%;
+  right: 2%;
+}
+
+.pdfViewerSave {
+  position: absolute;
+  top: 25%;
+  right: 2%;
+}
+
+.closePdfViewer {
+  position: absolute;
+  top: 2%;
+  right: 2%;
+}
+
+.pdfInfoContainer {
+  position: absolute;
+  top: 18%;
+  left: 2%;
+  width: 20%;
+  height: 100%;
+  text-align: left;
+}
+
+.pdfImageContainer {
+  position: absolute;
+  top: 5%;
+  right: 1%;
+  width: 80%;
+  height: 100%;
+}
+
+.pdfImageLabel {
+  display: inline-block;
+  margin-left: 100px;
+  margin-right: 100px;
+  margin-top: 50px;
+}
+
+.pdfComments {
+  position: absolute;
+  bottom: 8%;
+  right: 10%;
+  width: 60%;
+  text-align: left;
+  border: 2px solid black;
+  padding-left: 10px;
+  border-radius: .5em;
+  font-size: 80%;
+}
+
+.adminEditTable {
+  width: 100%;
+}
+
+.addModal {
+  width: 100%;
+  height: 60%;
+}
+/* cancel button */
+.addModalButtonContainer {
+  margin: auto;
+  margin-top: 1em;
+}
+.addModalButtonContainer button {
+  display: inline-block;
+  margin-right: .5em;
+}
+
+.addModalButtonContainer input {
+  display: inline-block;
+  margin-left: .5em;
+}
+
+.addModal form {
+  width: 90%;
+  max-width: 400px;
+  margin: auto;
+}
+
+.addModal form label{
+  text-align: left;
+  margin-right: .5em;
+}
+
+.addModal form input{
+  align: right;
+  margin-top: 14px;
+  border-radius: .2em;
+  border-width: .1em;
+  text-align: center;
+}
+
+.addModal form select {
+  text-align: right;
+  margin-top: 14px;
+  text-align: center
+}
+
+.addModal form.checkbox {
+  text-align: right;
+  margin-top: 16px;
+  text-align: center
+}
+
+.postNotification {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  height: 100%;
+  width: 100%;
+  background-color: white;
+  border-radius: .5em;
+}
+
+.postNotificationContainer {
+  margin: auto;
+  width: 50%;
+  height: 40%;
+  margin-top: 10%;
+  background-color: lightgrey;
+  border-radius: .5em;
+  padding-top: 10%;
 }

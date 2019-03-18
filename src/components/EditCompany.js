@@ -1,47 +1,42 @@
 import React from 'react';
 
-class AddLPN extends React.Component {
+class EditCompany extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            lpn: '',
-            customerId: '',
             companyId: '',
-            flagged: 0,
+            name: '',
+            flagged: '',
+            customerId: '',
             submitted: false,
             waiting: false,
             success: false,
-            fail: false,
+            fail: false
         }
-        this.handleAddLPN = this.handleAddLPN.bind(this);
+
+        this.handleEditCompany = this.handleEditCompany.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleClear = this.handleClear.bind(this);
-        this.refreshLpnList = this.refreshLpnList.bind(this);
+        this.refreshCompanyList = this.refreshCompanyList.bind(this);
         this.toggleFlagged = this.toggleFlagged.bind(this);
     }
 
     componentDidMount() {
-        if(this.props.isAdmin){
-            this.setState({ customerId: this.props.customers.id })
-        } else {
-            this.setState({
-                customerId: this.props.customers[0].id,
-        })
         this.setState({
-            personId: this.props.people[0].id,
-            companyId: this.props.companies[0].id,
-            flagged: 0,
+            companyId: this.props.rowData.id,
+            name: this.props.rowData.sName,
+            flagged: this.props.rowData.fFlagged,
+            customerId: this.props.rowData.GateCustomer.id
         })
-        }
     }
 
     componentWillUnmount() {
         if(this.props.isMaster) {
-            this.props.getAllLpns();
+            this.props.getAllCompanies();
         }
         if(this.props.isAdmin) {
-            this.props.getAllLpnsByCustomer();
+            this.props.getAllCompaniesByCustomer();
         }
     }
 
@@ -53,41 +48,46 @@ class AddLPN extends React.Component {
 
     handleClear() {
         this.setState({
-            lpn: '',
+            companyId: '',
+            name: '',
+            flagged: 0,
+            customerId: '',
             submitted: false,
             waiting: false,
             success: false,
-            fail: false,
+            fail: false
         })
     }
 
-  handleAddLPN(e) {
+  handleEditCompany(e) {
         e.preventDefault();
 
-        fetch('/api/gatelpn/' + this.state.customerId, {
+        fetch('/api/gatecompanyupdate/' + this.state.companyId, {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                sLPN: this.state.lpn.trim(),
-                bCompanyID: this.state.companyId,
-                fFlagged: this.state.flagged
+                sName: this.state.name.trim(),
+                fFlagged: this.state.flagged,
+                bCustomerID: this.state.customerId
             })
         })
         .then(res => res.json())
         .then(res => {
             console.log('Success:', JSON.stringify(res))
+            this.props.refreshTable();
             this.setState({ success: true })
         })
         .catch(error => {
             console.error('Error:', error)
             this.setState({ fail: true })
         });
+        
     }
 
-    refreshLpnList() {
-        this.props.closeAddLpn()
+    refreshCompanyList() {
+        this.props.closeEditCompany()
         this.setState({ 
             success: false,
             fail: false
@@ -97,9 +97,9 @@ class AddLPN extends React.Component {
     toggleFlagged() {
         let flaggedState = this.state.flagged;
         if (flaggedState === 0) {
-            this.setState({ flagged: 1})
+            this.setState({ flagged: 1} )
         } else {
-            this.setState({ flagged: 0})
+            this.setState({ flagged: 0} )
         }
 
     }
@@ -110,8 +110,8 @@ class AddLPN extends React.Component {
                 { this.state.success ? 
                     <div className="postNotification">
                         <div className="postNotificationContainer">
-                            <p>LPN Add Successful!</p>
-                            <button onClick={ () => this.refreshLpnList() }>OK</button>
+                            <p>Company Edit Successful!</p>
+                            <button onClick={ () => this.refreshCompanyList() }>OK</button>
                         </div>
                     </div> :
                     null
@@ -119,43 +119,34 @@ class AddLPN extends React.Component {
 
                 { this.state.fail ? 
                     <div className="postNotification">
-                        <p>LPN Add Failed!</p>
+                        <p>Company Edit Failed!</p>
                         <p>If the problem continues please contact your installer.</p>
-                        <button onClick={ () => this.refreshLpnList() }>OK</button>
+                        <button onClick={ () => this.refreshCompanyList() }>OK</button>
                     </div> :
                     null
                 }
 
                 { !this.state.success || !this.state.fail ?
                     <div>
-                        <h1>Add LPN</h1>
-                        <form onSubmit={ this.handleAddLPN }>
-
+                        <h1>Edit Company:</h1>
+                        <form onSubmit={ this.handleEditCompany }>
+                        
                         <label>Customer:</label>
                         { this.props.isMaster ? 
-                            <select value={this.state.customerId} onChange={(e) => this.setState({ customerId: e.target.value})}>
-                                {this.props.customers.map( customer => 
-                                    <option key={ customer.id } value={ customer.id }>{ customer.sName }</option>)
-                                }  
-                            </select> : <span>{ this.props.customerName }</span> }
-                        <br/>
-
-                        <label>Company</label>
-                        <select value={this.state.companyId} onChange={(e) => this.setState({ companyId: e.target.value})}>
-                            {this.props.companies.map( company => 
-                                <option key={ company.id } value={ company.id }>{ company.sName }</option>)
+                        <select value={this.state.customerId} onChange={(e) => this.setState({ customerId: e.target.value})}>
+                            {this.props.customers.map( customer => 
+                                <option key={ customer.id } value={ customer.id }>{ customer.sName }</option>)
                             }  
-                        </select>
+                        </select> : <span>{ this.props.customerName }</span> }
                         <br/>
 
-                        <label>License Plate Number:</label>
+                        <label>Company Name:</label>
                         <input
                             type="text"
-                            placeholder="enter lpn"
-                            name="lpn"
-                            value={ this.state.lpn }
-                            onChange={ this.handleChange }
-                            required />
+                            placeholder="enter name"
+                            name="name"
+                            value={ this.state.name }
+                            onChange={ this.handleChange } />
                         <br/>
 
                         <label>Flagged:</label>
@@ -166,18 +157,18 @@ class AddLPN extends React.Component {
                             checked={ this.state.flagged }
                             onChange={ this.toggleFlagged } />
                         <br/>
+
                         <div className="addModalButtonContainer">
-                            <button onClick={ () => this.props.closeAddLpn() }>Cancel</button>
-                            <input type="submit" value="Add License Plate Number" />
+                            <button onClick={ () => this.props.closeEditCompany() }>Cancel</button>
+                            <input type="submit" value="Save Company" />
                         </div>
                         </form>
-                        
                     </div> :
                     null 
                 }
-            </div>
-        )
+                </div>
+            )
     }
 }
 
-export default AddLPN;
+export default EditCompany;
