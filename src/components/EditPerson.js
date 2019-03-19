@@ -32,7 +32,7 @@ class EditPerson extends React.Component {
             companyId: this.props.rowData.GateCompany.id,
             groupId: this.props.rowData.GateGroup.id,
             flagged: this.props.rowData.fFlagged,
-            lpnId: this.props.rowData.GateLPN.id,
+            // lpnId: this.props.rowData.GateLPN.id,
             customerId: this.props.rowData.GateCustomer.id,
         })
     }

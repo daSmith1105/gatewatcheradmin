@@ -10,6 +10,7 @@ class TransactionMonitor extends React.Component {
         this.state = {
           clearInterval: false
         }
+
     }
 
     componentDidMount() {
@@ -37,11 +38,17 @@ class TransactionMonitor extends React.Component {
        }
     }
 
+
+    
+
     render() {
+
         return (
+            
+        
             <div style={{ marginTop: '-24px' }}>
               <h1>Event Monitor</h1>
-              
+
               {this.props.events.length === 0 ? 
                 <p>No Events Found.</p> :
                 null
@@ -60,9 +67,10 @@ class TransactionMonitor extends React.Component {
                                 isClient={ this.props.isClient } /> :
               null }
 
-            </div>
+             </div>
         )
     }
 }
 
 export default TransactionMonitor;
+

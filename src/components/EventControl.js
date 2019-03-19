@@ -65,9 +65,25 @@ class EventControl extends React.Component {
             : true);
         }
       }
+    
+    getTrProps = (state, rowInfo, column, instance) => {
+    if (rowInfo) {
+        return {
+        style: {
+            background: rowInfo.original.GateType.sName === 'OUT' ? 'lightblue' : 
+                        rowInfo.original.GateType.sName=== 'IN' ? 'lightgreen' : 
+                        rowInfo.original.GateType.sName === 'ACCIDENT' ? 'red' : 
+                        rowInfo.original.GateType.sName === 'DENIED' ? 'yellow' : 
+                        'white',
+            border: '2px solid grey',
+        }
+        }
+    }
+    
+        return {};
+      }
 
     render() {
-        
         const columns = [{
 
             Header: 'Date',
@@ -286,8 +302,13 @@ class EventControl extends React.Component {
                             style={{
                                 height: "400px" // This will force the table body to overflow and scroll, since there is not enough room
                               }}
+                            defaultSorted={[
+                            { id: "date", desc: true },
+                            { id: "time", desc: true }
+                            ]}
                             defaultPageSize={20}
                             className="-striped -highlight adminEditTable"
+                            getTrProps={ this.getTrProps }
                         />
                         <br/><br/>
                         <div className="addButtonContainer">

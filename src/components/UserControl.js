@@ -68,7 +68,6 @@ class UserControl extends React.Component {
     }
 
     handleDeleteUser(data) {
-        console.log('/api/gateuserdestroy/' + data.id.toString())
         fetch('/api/gateuserdestroy/' + data.id.toString(), {
             method: 'DELETE' 
         })

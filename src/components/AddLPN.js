@@ -29,7 +29,6 @@ class AddLPN extends React.Component {
                 customerId: this.props.customers[0].id,
         })
         this.setState({
-            personId: this.props.people[0].id,
             companyId: this.props.companies[0].id,
             flagged: 0,
         })

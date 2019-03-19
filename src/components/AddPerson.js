@@ -155,7 +155,7 @@ class AddPerson extends React.Component {
                         <select value={ this.state.customerId } onChange={(e) => { this.setState({ customerId: e.target.value })
                                     }}>
                             {this.props.customers.map( customer => 
-                                <option key={ customer.id } company={ customer.GateCompanies[0].id }value={ customer.id }>{ customer.sName }</option>)
+                                <option key={ customer.id } value={ customer.id }>{ customer.sName }</option>)
                             }  
                         </select> : <span>{ this.props.customerName }</span> }
                         <br/>

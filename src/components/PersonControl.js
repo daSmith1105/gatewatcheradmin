@@ -76,6 +76,7 @@ class PersonControl extends React.Component {
     }
 
     render() {
+        console.log(this.props)
         const columns = [{
             Header: 'Name',
             accessor: d => `${d.sFirstName} ${d.sLastName}`,
@@ -112,7 +113,7 @@ class PersonControl extends React.Component {
             ),
         }, {
             Header: 'LPN',
-            accessor: 'GateLPN.sLPN',
+            accessor: 'bLpnId',
             width: 200,
             id: "lpn",
             Filter: ({filter, onChange}) => (

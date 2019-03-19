@@ -98,7 +98,6 @@ export default class RealtimeEvents extends React.Component {
       }
 
     render() {
-      console.log(this.props.events)
         const columns = [{
             Header: 'Date',
             accessor: d => moment(d.createdAt).format('MM/DD/YY'),
